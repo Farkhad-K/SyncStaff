@@ -1,0 +1,24 @@
+@model SyncStaff.MVC.Models.Employee
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Employee Details";
+}
+
+<div class="page-card" style="max-width:700px; margin:40px auto;">
+    <h2 class="card-title">@Model.Forenames @Model.Surname</h2>
+
+    <div style="margin-top:18px; display:flex; gap:18px; align-items:flex-start;">
+        <div style="flex:1;">
+            <p><strong>Payroll:</strong> @Model.PayrollNumber</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Telephone:</strong> @Model.Telephone</p>
+            <p><strong>Mobile:</strong> @Model.Mobile</p>
+            <p><strong>Address:</strong> @Model.Address</p>
+            <p><strong>Start Date:</strong> @Model.StartDate.ToString("yyyy-MM-dd")</p>
+        </div>
+        <div style="width:200px; text-align:right;">
+            <a class="btn btn-choose" href="/Employees/Overview">Back</a>
+            <button class="btn btn-delete" onclick="confirm('Implement further actions here')">Action</button>
+        </div>
+    </div>
+</div>

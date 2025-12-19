@@ -1,0 +1,111 @@
+@using SyncStaff.MVC.Models
+@model List<Employee>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-card">
+    <h2 class="card-title">Employees — Import & Manage</h2>
+
+    <form asp-action="Import" asp-controller="Employees" method="post" enctype="multipart/form-data" class="import-row">
+        <input type="file" name="file" accept=".csv" class="file-input" />
+        <button type="submit" class="btn btn-import">Import CSV</button>
+        <div style="margin-left:auto; color:#cfe8ff; font-size:13px;">Tip: upload files up to 10 MB</div>
+    </form>
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert">@ViewBag.Message</div>
+    }
+
+    <div style="overflow:auto; margin-top:12px;">
+        <table id="employeesTable" class="display">
+            <thead>
+                <tr>
+                    <th>Forenames</th>
+                    <th>Surname</th>
+                    <th>Payroll</th>
+                    <th>Email</th>
+                    <th style="width:200px">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model ?? new List<Employee>())
+                {
+                    <tr data-id="@e.Id">
+                        <td data-field="Forenames" contenteditable="true">@e.Forenames</td>
+                        <td data-field="Surname" contenteditable="true">@e.Surname</td>
+                        <td data-field="Payroll">@e.PayrollNumber</td>
+                        <td data-field="Email" contenteditable="true">@e.Email</td>
+                        <td class="actions">
+                            <button type="button" class="btn btn-small btn-delete" title="Delete row">Delete</button>
+                            <button type="button" class="btn btn-small btn-choose" title="Choose row">Choose</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- DataTables CSS should remain in head if desired; include JS here after jQuery -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(function () {
+            var table = $('#employeesTable').DataTable({
+                order: [[1, 'asc']], // sort by Surname
+                paging: true,
+                searching: true,
+                columnDefs: [
+                    { orderable: false, targets: -1 } // actions column not orderable
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search employees..."
+                }
+            });
+
+            // Delete handler (AJAX DELETE)
+            $('#employeesTable').on('click', '.btn-delete', function (e) {
+                e.preventDefault();
+                if (!confirm('Delete this employee?')) return;
+
+                var $row = $(this).closest('tr');
+                var id = $row.data('id');
+                var btn = $(this);
+                btn.prop('disabled', true).text('Deleting...');
+
+                $.ajax({
+                    url: '/Employees/DeleteEmployee?employeeId=' + encodeURIComponent(id),
+                    method: 'DELETE',
+                    success: function () {
+                        table.row($row).remove().draw();
+                    },
+                    error: function (xhr) {
+                        btn.prop('disabled', false).text('Delete');
+                        alert('Failed to delete employee. ' + (xhr.responseText || 'Check server logs.'));
+                    }
+                });
+            });
+
+            // Choose handler - navigate to Details page
+            $('#employeesTable').on('click', '.btn-choose', function () {
+                var $row = $(this).closest('tr');
+                var id = $row.data('id');
+                // navigate to /Employees/Details/{id}
+                window.location.href = '/Employees/Details/' + encodeURIComponent(id);
+            });
+
+            // UX: Enter blurs editable cell
+            $('#employeesTable').on('keydown', 'td[contenteditable]', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    $(this).blur();
+                }
+            });
+        });
+    </script>
+}
