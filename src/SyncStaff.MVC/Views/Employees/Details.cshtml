@@ -5,20 +5,75 @@
 }
 
 <div class="page-card" style="max-width:700px; margin:40px auto;">
-    <h2 class="card-title">@Model.Forenames @Model.Surname</h2>
+    <form id="employeeForm" method="post" action="/Employees/UpdateEmployee">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="Id" value="@Model.Id" />
 
-    <div style="margin-top:18px; display:flex; gap:18px; align-items:flex-start;">
-        <div style="flex:1;">
-            <p><strong>Payroll:</strong> @Model.PayrollNumber</p>
-            <p><strong>Email:</strong> @Model.Email</p>
-            <p><strong>Telephone:</strong> @Model.Telephone</p>
-            <p><strong>Mobile:</strong> @Model.Mobile</p>
-            <p><strong>Address:</strong> @Model.Address</p>
-            <p><strong>Start Date:</strong> @Model.StartDate.ToString("yyyy-MM-dd")</p>
+        <div class="details-header">
+            <div style="flex:1; display:flex; gap:8px; align-items:center;">
+                <input name="Forenames" class="form-control name-input" value="@Model.Forenames" />
+                <input name="Surname" class="form-control name-input" value="@Model.Surname" />
+            </div>
+            <div class="details-actions">
+                <a class="btn btn-small btn-back" href="/Employees/Overview">Back</a>
+                <button id="saveBtn" class="btn btn-choose btn-small" type="button">Save</button>
+            </div>
         </div>
-        <div style="width:200px; text-align:right;">
-            <a class="btn btn-choose" href="/Employees/Overview">Back</a>
-            <button class="btn btn-delete" onclick="confirm('Implement further actions here')">Action</button>
+        <div style="margin-top:6px; display:flex; gap:18px; align-items:flex-start;">
+            <div style="flex:1;">
+                <div style="margin-bottom:8px;">
+                    <label><strong>Payroll:</strong></label>
+                    <input class="form-control" name="PayrollNumber" value="@Model.PayrollNumber" />
+                </div>
+
+                <div style="margin-bottom:8px;">
+                    <label><strong>Email:</strong></label>
+                    <input class="form-control" name="Email" value="@Model.Email" />
+                </div>
+
+                <div style="margin-bottom:8px; display:flex; gap:8px;">
+                    <div style="flex:1;">
+                        <label><strong>Telephone:</strong></label>
+                        <input class="form-control" name="Telephone" value="@Model.Telephone" />
+                    </div>
+                    <div style="flex:1;">
+                        <label><strong>Mobile:</strong></label>
+                        <input class="form-control" name="Mobile" value="@Model.Mobile" />
+                    </div>
+                </div>
+
+                <div style="margin-bottom:8px;">
+                    <label><strong>Address:</strong></label>
+                    <textarea class="form-control" name="Address">@Model.Address</textarea>
+                </div>
+
+                <div style="margin-bottom:8px;">
+                    <label><strong>Start Date:</strong></label>
+                    <input class="form-control" type="date" name="StartDate" value='@Model.StartDate.ToString("yyyy-MM-dd")' />
+                </div>
+            </div>
         </div>
-    </div>
+    </form>
+
+    <script>
+    (function(){
+        const saveBtn = document.getElementById('saveBtn');
+        const form = document.getElementById('employeeForm');
+        saveBtn?.addEventListener('click', async function(){
+            const url = form.action || window.location.href;
+            const fd = new FormData(form);
+            try {
+                const res = await fetch(url, { method: 'PUT', body: fd });
+                if (res.ok) {
+                    saveBtn.textContent = 'Saved';
+                    setTimeout(()=> saveBtn.textContent = 'Save', 1400);
+                } else {
+                    alert('Save failed: ' + res.status);
+                }
+            } catch (e) {
+                alert('Save error');
+            }
+        });
+    })();
+    </script>
 </div>

@@ -1,16 +1,17 @@
 @using SyncStaff.MVC.Models
 @model List<Employee>
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Staff";
+    @* Layout = "~/Views/Shared/_Layout.cshtml"; *@
 }
 
 <div class="page-card">
-    <h2 class="card-title">Employees — Import & Manage</h2>
+    <h2 class="card-title">Employees - Import & Manage</h2>
 
     <form asp-action="Import" asp-controller="Employees" method="post" enctype="multipart/form-data" class="import-row">
-        <input type="file" name="file" accept=".csv" class="file-input" />
+        <input type="file" name="file" accept=".csv" class="file-input" style="background-color: transparent;" />
         <button type="submit" class="btn btn-import">Import CSV</button>
-        <div style="margin-left:auto; color:#cfe8ff; font-size:13px;">Tip: upload files up to 10 MB</div>
+        <div style="margin-left:auto; color:#65abec; font-size:13px;">Tip: upload files up to 10 MB</div>
     </form>
 
     @if (ViewBag.Message != null)

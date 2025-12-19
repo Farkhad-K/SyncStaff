@@ -1,5 +1,7 @@
 html {
   font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,15 +10,225 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* keep a footer offset as before */
 body {
   margin-bottom: 60px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  background-attachment: fixed;
+  color: #0f172a;
+}
+
+/* focus rings (preserve but keep subtle) */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem rgba(255,255,255,0.12), 0 0 0 0.25rem #258cfb;
+}
+
+
+.app-navbar {
+  background: rgba(0,0,0,0.06); /* subtle translucent bar */
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Ensure any nav-link text (including text-dark markup) is readable */
+.app-navbar .navbar-brand,
+.app-navbar .nav-link,
+.app-navbar .nav-link.text-dark,
+.app-navbar .navbar-brand.text-dark {
+  color: #0f172a !important; /* dark tone that works with light nav */
+}
+
+.app-navbar .nav-link:hover {
+  color: #92c0ef !important;
+}
+
+/* Buttons used only by the employees pages (scoped by class name) */
+.btn-delete {
+  background: linear-gradient(90deg,#ef4444,#dc2626);
+  color: #fff;
+  border: none;
+}
+
+.btn-choose {
+  background: linear-gradient(90deg,#06b6d4,#10b981);
+  color: #fff;
+  border: none;
+}
+
+.btn-import {
+  background: linear-gradient(90deg,#06b6d4,#3b82f6);
+  color: #fff;
+  border: none;
+}
+
+/* small button variant */
+.btn-small {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* centered page card title */
+.card-title {
+  text-align: center;
+}
+
+/* page-card: scoped visual container for pages that use it */
+.page-card {
+  max-width: 1200px;
+  margin: 28px auto;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 8px 30px rgba(2, 6, 23, 0.1);
+}
+
+/* details header: align name and actions */
+.details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.details-header .card-title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.details-actions { display:flex; gap:8px; align-items:center; }
+
+.form-control {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: transparent;
+}
+
+/* name inputs in header should look like plain title text */
+.name-input {
+  border: none;
+  background: transparent;
+  padding: 4px 6px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: inherit;
+  min-width: 0;
+}
+
+.name-input:focus { outline: none; box-shadow: none; }
+
+/* make action buttons visually consistent in the header */
+.details-actions .btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+.btn-back {
+  background: transparent;
+  border: 1px solid rgba(15,23,42,0.06);
+  color: #0f172a;
+}
+
+/* Employees table cell borders (scoped to the employees table id) */
+table#employeesTable th,
+table#employeesTable td {
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 8px 10px;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* subtle zebra for readability */
+table#employeesTable tbody tr:nth-child(even) td {
+  background: rgba(0,0,0,0.02);
+}
+
+/* editable cells */
+td[contenteditable="true"] {
+  outline: none;
+  background: rgba(255,255,255,0.01);
+}
+
+/* small import area */
+.import-row {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.file-input {
+  background: transparent;
+  border: 1px dashed rgba(0,0,0,0.08);
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: inherit;
+}
+
+/* helper alert box */
+.alert {
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* small responsive tweak: hide email on very narrow screens */
+@media (max-width: 480px) {
+  table#employeesTable th:nth-child(4),
+  table#employeesTable td:nth-child(4) {
+    display: none;
+  }
+}
+
+/* Target the button inside your input */
+.file-input::file-selector-button {
+    background-color: #8dc1f1; /* Your preferred color */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.file-input::file-selector-button:hover {
+    background-color: #4a8ec9;
+}
+
+/* DataTables search, pagination, and info visibility */
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  color: #0f172a !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #06b6d4 !important;
+  color: #fff !important;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  color: #0f172a;
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.8);
 }

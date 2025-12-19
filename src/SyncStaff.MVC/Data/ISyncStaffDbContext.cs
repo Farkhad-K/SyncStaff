@@ -9,5 +9,7 @@ public interface ISyncStaffDbContext
     DatabaseFacade Database { get; }
     DbSet<Employee> Employees { get; set; }
 
+    void DetachEntity(object entity);
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
