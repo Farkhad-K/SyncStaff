@@ -5,6 +5,8 @@ using System;
 
 namespace SyncStaff.MVC.Models.Configurations;
 
+// EF Core fluent configuration for the Employee entity.
+// Keeps DB schema details (types, sizes, conversions, and indexes) centralized.
 public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
@@ -56,6 +58,7 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
                .HasColumnType("varchar(20)");
 
         // DateOnly -> SQL date mapping (with conversion to/from DateTime)
+        // Convert DateOnly to DateTime for storage and back when reading.
         builder.Property(e => e.DateofBirth)
                .IsRequired()
                .HasConversion(
@@ -71,6 +74,7 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
                .HasColumnType("date");
 
         // Timestamps: use datetimeoffset in SQL Server, default to current offset time
+        // CreatedAt defaults to server time; ModifiedAt is updated on changes.
         builder.Property(e => e.CreatedAt)
                .IsRequired()
                .HasColumnType("datetimeoffset")

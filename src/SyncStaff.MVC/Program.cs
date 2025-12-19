@@ -5,6 +5,8 @@ using SyncStaff.MVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register MVC and application services.
+// DbContext is registered against the interface so services take a minimal, testable dependency.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ISyncStaffDbContext, SyncStaffDbContext>(options =>

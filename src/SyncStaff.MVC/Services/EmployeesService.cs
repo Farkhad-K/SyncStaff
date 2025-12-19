@@ -6,17 +6,23 @@ using SyncStaff.MVC.Models;
 
 namespace SyncStaff.MVC.Services;
 
+// Service encapsulating employee-related business logic and data access patterns.
+// Responsible for listing, updating, importing (CSV) and deleting employee records.
 public class EmployeesService(ISyncStaffDbContext db) : IEmployeesService
 {
+    // Return all employees (read-only, ordered by surname).
     public async Task<List<Employee>> GetAllEmployeesAsync(CancellationToken cancellationToken = default)
         => await db.Employees
                    .AsNoTracking()
                    .OrderBy(e => e.Surname)
                    .ToListAsync(cancellationToken);
 
+    // Fetch a single employee by id.
     public async Task<Employee?> GetEmployeeByIdAsync(int employeeId, CancellationToken cancellationToken = default)
         => await db.Employees.FirstOrDefaultAsync(e => e.Id == employeeId, cancellationToken);
 
+    // Update an existing employee with values supplied by the caller.
+    // Only updates editable fields and stamps ModifiedAt.
     public async Task UpdateEmployeeAsync(Employee employee, CancellationToken cancellationToken = default)
     {
         var existing = await db.Employees.FirstOrDefaultAsync(e => e.Id == employee.Id, cancellationToken);
@@ -37,6 +43,13 @@ public class EmployeesService(ISyncStaffDbContext db) : IEmployeesService
         await db.SaveChangesAsync(cancellationToken);
     }
 
+    // Import CSV data and insert new employee rows.
+    // Returns a tuple of (insertedCount, failedCount).
+    // Process:
+    //  1) Parse CSV into memory and validate required fields
+    //  2) Check DB for existing payroll numbers to avoid duplicates
+    //  3) Filter parsed rows to only new ones
+    //  4) Bulk insert with a per-row fallback on conflict/failure
     public async Task<(int Inserted, int Failed)> ImportFromCsvAsync(Stream csvStream, CancellationToken cancellationToken = default)
     {
         if (csvStream is null) throw new ArgumentNullException(nameof(csvStream));
@@ -181,6 +194,7 @@ public class EmployeesService(ISyncStaffDbContext db) : IEmployeesService
         return (inserted, failed);
     }
 
+    // Delete an employee if it exists.
     public async Task DeleteEmployeeAsync(int employeeId, CancellationToken cancellationToken = default)
     {
         var existingEmp = await db.Employees.FirstOrDefaultAsync(e => e.Id == employeeId, cancellationToken);
@@ -191,6 +205,7 @@ public class EmployeesService(ISyncStaffDbContext db) : IEmployeesService
         await db.SaveChangesAsync(cancellationToken);
     }
 
+    // Helper: try a list of keys and return the first non-empty value.
     private static string GetField(Dictionary<string, string> map, params string[] keys)
     {
         foreach (var k in keys)
@@ -201,6 +216,8 @@ public class EmployeesService(ISyncStaffDbContext db) : IEmployeesService
         return string.Empty;
     }
 
+    // Helper: robustly parse common date formats into DateOnly.
+    // Falls back to DateTime.MinValue when parsing fails to keep import resilient.
     private static DateOnly ParseDateOnly(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))

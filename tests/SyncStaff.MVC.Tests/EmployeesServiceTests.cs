@@ -27,8 +27,10 @@ public class EmployeesServiceTests
 
         using var ms = new System.IO.MemoryStream(Encoding.UTF8.GetBytes(csv.ToString()));
 
+        // Act: import two valid rows
         var (inserted, failed) = await service.ImportFromCsvAsync(ms);
 
+        // Assert: expect both rows inserted and none failed
         Assert.Equal(2, inserted);
         Assert.Equal(0, failed);
 

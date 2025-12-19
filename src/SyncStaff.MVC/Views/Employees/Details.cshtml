@@ -4,6 +4,10 @@
     ViewData["Title"] = "Employee Details";
 }
 
+@* Details page: displays and allows editing of a single employee.
+   The form posts updated values via a JavaScript PUT request to keep the UX snappy.
+   Anti-forgery token is included for protection. *@
+
 <div class="page-card" style="max-width:700px; margin:40px auto;">
     <form id="employeeForm" method="post" action="/Employees/UpdateEmployee">
         @Html.AntiForgeryToken()
@@ -57,6 +61,7 @@
 
     <script>
     (function(){
+        // Save button uses AJAX PUT so the page doesn't need to reload on update.
         const saveBtn = document.getElementById('saveBtn');
         const form = document.getElementById('employeeForm');
         saveBtn?.addEventListener('click', async function(){
